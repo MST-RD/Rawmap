@@ -8,42 +8,60 @@
 #
 
 library(shiny)
+library(haven)
+library(DT)
+
+
+# sas <- data.frame(read_sas("D:/vs1.sas7bdat"))
 
 # Define UI for application that draws a histogram
 ui <- fluidPage(
-
-    # Application title
-    titlePanel("Old Faithful Geyser Data"),
-
-    # Sidebar with a slider input for number of bins 
+    titlePanel('Examples od Datatables'),
     sidebarLayout(
         sidebarPanel(
-            sliderInput("bins",
-                        "Number of bins:",
-                        min = 1,
-                        max = 50,
-                        value = 30)
+            #读入文件
+            fileInput("sas", "Choose sas File",
+                      multiple = TRUE),
+            #空一行
+            tags$hr(),
+            
+            #选择变量
+            uiOutput("checkbox")
+           
         ),
-
-        # Show a plot of the generated distribution
+        
+        #右边主界面
         mainPanel(
-           plotOutput("distPlot")
+            #展示table
+            tableOutput("mytable1")
         )
     )
 )
 
-# Define server logic required to draw a histogram
-server <- function(input, output) {
+server <- function(input, output){
 
-    output$distPlot <- renderPlot({
-        # generate bins based on input$bins from ui.R
-        x    <- faithful[, 2]
-        bins <- seq(min(x), max(x), length.out = input$bins + 1)
 
-        # draw the histogram with the specified number of bins
-        hist(x, breaks = bins, col = 'darkgray', border = 'white')
+    #交互操作
+    output$mytable1 <- renderTable({
+        #读入输入的地址
+        infile <- data.frame(read_sas(input$sas))
+        if (is.null(inFile))
+            return(NULL)
+        #提取前10行
+        diamonds2 <- head(infile,n=10)
+        #不知道干嘛
+        datatable(diamonds2[, input$show_vars])
     })
+    
+    #没起作用
+    output$checkbox<-renderUI({
+        checkboxGroupInput("VAR","FF:", choices = diamonds2
+        )
+    })
+    
+
 }
+
 
 # Run the application 
 shinyApp(ui = ui, server = server)
