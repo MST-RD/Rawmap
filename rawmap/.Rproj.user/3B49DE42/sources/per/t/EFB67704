@@ -5,15 +5,15 @@
     "dirty" : false,
     "encoding" : "UTF-8",
     "folds" : "",
-    "hash" : "728857258",
+    "hash" : "2524705074",
     "id" : "EFB67704",
-    "lastKnownWriteTime" : 1579077076,
-    "last_content_update" : 1579077076618,
+    "lastKnownWriteTime" : 1579081643,
+    "last_content_update" : 1579081643942,
     "path" : "E:/RCODE/Rawmap/rawmap/app.R",
     "project_path" : "app.R",
     "properties" : {
-        "cursorPosition" : "15,0",
-        "scrollLine" : "4"
+        "cursorPosition" : "56,18",
+        "scrollLine" : "40"
     },
     "read_only" : false,
     "read_only_alternatives" : [

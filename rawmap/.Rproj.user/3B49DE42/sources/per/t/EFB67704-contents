@@ -53,7 +53,9 @@ server <- function(input, output){
             else{
             #提取前10行和动态展现有哪些变量被选择
             head(read_sas(infile$datapath),n=10)[,input$datasetSelector]
-            }
+            },
+            #加入滚动条
+            options = list(scrollX = TRUE)
             )
     })
     
