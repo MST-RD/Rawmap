@@ -20,44 +20,60 @@ ui <- fluidPage(
     sidebarLayout(
         sidebarPanel(
             #读入文件
-            fileInput("sas", "Choose sas File",
-                      multiple = TRUE),
+            fileInput("sas", "Choose sas File"),
             #空一行
             tags$hr(),
             
-            #选择变量
+            #选择框
             uiOutput("checkbox")
+            
            
         ),
         
         #右边主界面
         mainPanel(
             #展示table
-            tableOutput("mytable1")
+            dataTableOutput("table")
         )
     )
 )
 
 server <- function(input, output){
 
-
+    
     #交互操作
-    output$mytable1 <- renderTable({
-        #读入输入的地址
-        infile <- data.frame(read_sas(input$sas))
-        if (is.null(inFile))
+    output$table <- renderDataTable({
+        infile <- input$sas
+        if (is.null(infile))
             return(NULL)
-        #提取前10行
-        diamonds2 <- head(infile,n=10)
-        #不知道干嘛
-        datatable(diamonds2[, input$show_vars])
+        #读入input的sas数据集
+        datatable(
+            if (is.null(input$datasetSelector))
+            {return(NULL)}
+            else{
+            #提取前10行和动态展现有哪些变量被选择
+            head(read_sas(infile$datapath),n=10)[,input$datasetSelector]
+            }
+            )
     })
     
-    #没起作用
+    #动态创建个链表
+    fileOptions <- reactiveValues(currentOptions=c())
+    
+    #动态处理，把input的sas数据集的colname与链表连接
+    observeEvent(input$sas, {
+        fileOptions$currentOptions = c(fileOptions$currentOptions, 
+                                    colnames(read_sas(input$sas$datapath)))
+    })
+    
+    #创建动态选择栏
     output$checkbox<-renderUI({
-        checkboxGroupInput("VAR","FF:", choices = diamonds2
+        checkboxGroupInput("datasetSelector","chose what you want:", 
+                           choiceNames  = fileOptions$currentOptions,
+                           choiceValues = fileOptions$currentOptions
         )
     })
+    
     
 
 }
